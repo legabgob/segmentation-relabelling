@@ -1,7 +1,7 @@
 # List number of iterations
 k = range(3,9)
 RESOLUTIONS = ["576", "1024"]
-DATASETS = ["FIVES", "Fundus-AVSeg"]
+DATASETS = ["Fundus-AVSeg"]
 
 rule refinement:
     input:
@@ -18,7 +18,7 @@ rule refinement:
         ),
     output:
         refined = directory(
-            "/SSD/home/gabriel/rrwnet/refined/{dataset}/downsampled/{res}px/k{k}/"
+            "/SSD/home/gabriel/rrwnet/refined/{dataset}/k{k}/downsampled/{res}px/"
         ),
     shell:
         r"""
