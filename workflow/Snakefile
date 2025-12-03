@@ -3,7 +3,7 @@ include: "./rules/refinement.smk"
 
 rule all:
     input:
-        expand(rules.vascxgray_to_rgb.output, dataset=DATASETS, sample=SAMPLES,),
+      # expand(rules.gray_to_rgb.output, dataset=DATASETS, sample=SAMPLES,),
         expand(
             rules.refinement.output.refined,
             dataset=DATASETS,
