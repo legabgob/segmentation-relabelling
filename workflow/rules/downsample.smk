@@ -1,0 +1,25 @@
+# rules/downsample.smk
+
+# Set these to whatever makes sense in your project
+DATASETS = ["FIVES", "Fundus-AVSeg"]      # or load from glob_wildcards
+KINDS = ["predictions", "masks"]
+WIDTHS = [576, 1024]
+
+rule downsample:
+    """
+    Downsample all images in a folder for a given dataset/kind/width.
+    """
+    input:
+        # Directory containing the original images
+        in_dir = directory("data/{dataset}/{kind}/orig")
+    output:
+        # Directory to store the downsampled images
+        out_dir = directory("data/{dataset}/{kind}/{width}px")
+    params:
+        kind = "{kind}",
+        # width is wildcard string; cast to int in the script
+        width = lambda wc: int(wc.width),
+        ext = ".png",
+    script:
+        "scripts/downsample_smk.py"
+

@@ -1,5 +1,6 @@
 include: "./rules/vascxgray_to_rgb.smk"
 include: "./rules/refinement.smk"
+include: "./rules/downsample.smk"
 
 rule all:
     input:
