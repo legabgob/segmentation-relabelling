@@ -41,14 +41,14 @@ workflow/
   rules/
     gray_to_rgb.smk      # grayscale A/V label → RGB conversion
     downsample.smk       # image / mask downsampling
-    roi.smk              # ROI mask generation from bounds/meta CSV
-    replace_1_to_255.smk # simple relabelling of grayscale masks
+    create_roi_masks.smk              # ROI mask generation from bounds/meta CSV
+    binarize_masks.smk # simple relabelling of grayscale masks
     refinement.smk       # RRWNet refinement (grid over k, res, dataset)
-    metrics.smk          # unified metrics for Fundus-AVSeg & FIVES
+    dice.smk          # unified metrics for Fundus-AVSeg & FIVES
 scripts/
-  gray2rgb_smk.py
+  gray_to_rgb_smk.py
   downsample_smk.py
   roi_from_csv_smk.py
-  replace_1_to_255_smk.py
+  binarize_masks_smk.py
   compute_metrics_smk.py
 ```
