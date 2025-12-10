@@ -5,7 +5,7 @@ from PIL import Image
 def downsample_one(src: Path, dst: Path, kind: str, target_w: int):
     im = Image.open(src)
 
-    if kind == "predictions":
+    if kind == "segs":
         # Keep as RGB discrete labels
         im = im.convert("RGB")
         resample = Image.NEAREST

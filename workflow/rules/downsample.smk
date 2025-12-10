@@ -1,7 +1,7 @@
 # rules/downsample.smk
 
 # Set these to whatever makes sense in your project
-KINDS = ["predictions", "masks"]
+KINDS = ["segs", "masks"]
 WIDTHS = [576, 1024]
 
 rule downsample:
@@ -10,10 +10,10 @@ rule downsample:
     """
     input:
         # Directory containing the original images
-        in_dir = "data/{dataset}/{kind}/orig"
+        in_dir = "data/{dataset}/segs_converted"
     output:
         # Directory to store the downsampled images
-        out_dir = directory("data/{dataset}/{kind}/{width}px")
+        out_dir = directory("data/{dataset}/downsampled/{width}px/{kind}/")
     params:
         kind = "{kind}",
         # width is wildcard string; cast to int in the script
