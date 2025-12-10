@@ -23,4 +23,8 @@ rule all:
     log:
         err = "logs/all.err",
         out = "logs/all.out"
+    
+    benchmark:
+        "benchmarks/all.txt"
+
 
