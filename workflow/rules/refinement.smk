@@ -1,8 +1,3 @@
-# List number of iterations
-k = range(3,9)
-RESOLUTIONS = ["576", "1024"]
-DATASETS = ["Fundus-AVSeg"]
-
 rule refinement:
     input:
       weights = lambda wildcards: (

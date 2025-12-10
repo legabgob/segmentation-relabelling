@@ -1,7 +1,6 @@
 # rules/downsample.smk
 
 # Set these to whatever makes sense in your project
-DATASETS = ["FIVES", "Fundus-AVSeg"]      # or load from glob_wildcards
 KINDS = ["predictions", "masks"]
 WIDTHS = [576, 1024]
 
@@ -11,7 +10,7 @@ rule downsample:
     """
     input:
         # Directory containing the original images
-        in_dir = directory("data/{dataset}/{kind}/orig")
+        in_dir = "data/{dataset}/{kind}/orig"
     output:
         # Directory to store the downsampled images
         out_dir = directory("data/{dataset}/{kind}/{width}px")

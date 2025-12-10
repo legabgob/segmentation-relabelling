@@ -1,3 +1,5 @@
+import os
+
 def find_roi_csv(wc):
     """
     Automatically selects bounds.csv or meta.csv if present.

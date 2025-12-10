@@ -1,36 +1,48 @@
 # Automatically discover samples from input folder
-from snakemake.io import glob_wildcards
-import os
+from pathlib import Path
 
-pattern1 = "/HDD/data/relabelling-project/{dataset}/seg_legacy/av/{sample}.png"
-pattern2 = "/HDD/data/relabelling-project/{dataset}/{other_dir}/seg_legacy/av/{sample}.png"
+ROOT = Path("/HDD/data/relabelling-project")
 
-datasets1, samples1 = glob_wildcards(pattern1)
-datasets2, other_dirs2, samples2 = glob_wildcards(pattern2)
-
+# Map (dataset, sample) -> full path to grayscale AV label
 input_map = {}
 
-for d, s in zip(datasets1, samples1):
-    input_map[(d, s)] = f"/HDD/data/relabelling-project/{d}/seg_legacy/av/{s}.png"
+for p in ROOT.rglob("seg_legacy/av/*.png"):
+    # Expect something like:
+    # /HDD/.../relabelling-project/{dataset}/[optional other dirs]/seg_legacy/av/{sample}.png
+    parts = p.parts
+    try:
+        idx = parts.index("relabelling-project")
+    except ValueError:
+        continue  # shouldn't happen, but be safe
 
-for d, odir, s in zip(datasets2, other_dirs2, samples2):
-    input_map[(d, s)] = f"/HDD/data/relabelling-project/{d}/{odir}/seg_legacy/av/{s}.png"
+    if idx + 2 >= len(parts):
+        continue
+
+    dataset = parts[idx + 1]          # e.g. "FIVES" or "Fundus-AVSeg"
+    sample = p.stem                   # filename without .png
+
+    # If the same (dataset, sample) appears in multiple subdirs, last one wins.
+    input_map[(dataset, sample)] = str(p)
 
 PAIRS = sorted(input_map.keys())
-
-# Optional: expose these for rule all in Snakefile
-DATASETS = sorted({d for d, _ in PAIRS})
-SAMPLES  = sorted({s for _, s in PAIRS})
+GRAY_DATASETS = sorted({d for d, _ in PAIRS})
+GRAY_SAMPLES = sorted({s for _, s in PAIRS})
 
 
 def find_gray_av_input(wc):
-    return input_map[(wc.dataset, wc.sample)]
-
+    key = (wc.dataset, wc.sample)
+    try:
+        return input_map[key]
+    except KeyError:
+        raise ValueError(
+            f"No grayscale AV input found for dataset={wc.dataset}, sample={wc.sample}. "
+            f"Known pairs: {len(input_map)}"
+        )
 
 rule gray_to_rgb:
     input:
         gray = find_gray_av_input
     output:
-        rgb = "/data/{dataset}/segs_converted/{sample}.png"
+        rgb = "data/{dataset}/segs_converted/{sample}.png"
     script:
         "scripts/gray2rgb_smk.py"
