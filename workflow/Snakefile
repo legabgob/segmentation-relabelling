@@ -16,7 +16,7 @@ rule all:
         # Final desired outputs: refinement for Fundus-AVSeg at all k, resolutions
         expand(
             rules.refinement.output.refined,
-            dataset=["Fundus-AVSeg"],
+            dataset=["Fundus-AVSeg", "FIVES", "leuven-haifa"],
             res=RESOLUTIONS,
             k=k,
         ),

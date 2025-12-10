@@ -6,14 +6,14 @@ rule refinement:
           else "/SSD/home/gabriel/rrwnet/data/weights/rrwnet_RITE_refinement.pth"
           ),
       segmentations = lambda wildcards: (
-            f"/SSD/home/gabriel/rrwnet/data/{wildcards.dataset}/downsampled/{wildcards.res}px/segs/"
+            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/segs/"
         ),
         masks = lambda wildcards: (
-            f"/SSD/home/gabriel/rrwnet/data/{wildcards.dataset}/downsampled/{wildcards.res}px/masks/"
+            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/masks/"
         ),
     output:
         refined = directory(
-            "/SSD/home/gabriel/rrwnet/refined/{dataset}/k{k}/downsampled/{res}px/"
+            "data/refined/{dataset}/k{k}/downsampled/{res}px/"
         ),
     shell:
         r"""
