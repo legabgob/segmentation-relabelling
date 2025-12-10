@@ -31,6 +31,6 @@ rule gray_to_rgb:
     input:
         gray = find_gray_av_input
     output:
-        rgb = "/SSD/home/gabriel/segmentation-relabelling/data/{dataset}/segs_converted/{sample}.png"
+        rgb = "./data/{dataset}/segs_converted/{sample}.png"
     script:
         "scripts/gray2rgb_smk.py"

@@ -1,14 +1,76 @@
+
+# 1) Include all rule files (order here doesn't really matter,
+#    but we keep it in logical pipeline order for sanity)
 include: "./rules/vascxgray_to_rgb.smk"
-include: "./rules/refinement.smk"
-include: "./rules/downsample.smk"
+include: "./rules/copy_meta.smk"
 include: "./rules/create_roi_masks.smk"
+include: "./rules/binarize_masks.smk"
+include: "./rules/downsample.smk"
+include: "./rules/refinement.smk"
+
+# -------------------------------------------------------------------
+# Global lists for expansions
+# -------------------------------------------------------------------
+# FROM vascxgray_to_rgb.smk
+#   - PAIRS, DATASETS, SAMPLES are defined there.
+# FROM downsample.smk
+#   - KINDS, WIDTHS are defined there.
+# FROM refinement.smk
+#   - k and RESOLUTIONS are defined there.
+#
+# We just reuse them here.
+
+# -------------------------------------------------------------------
+# Final target: everything
+# -------------------------------------------------------------------
+
 
 rule all:
     input:
-      # expand(rules.gray_to_rgb.output, dataset=DATASETS, sample=SAMPLES,),
+        # 1) vascxgray_to_rgb.smk  -> gray_to_rgb
+        #    all converted A/V RGB segmentations
+        expand(
+            rules.gray_to_rgb.output.rgb,
+            dataset=DATASETS,
+            sample=SAMPLES,
+        ),
+
+        # 2) copy_meta.smk -> copy_meta_csv
+        #    ensure per-dataset meta.csv exists under data/{dataset}/meta/
+        expand(
+            rules.copy_meta_csv.output.dst,
+            dataset=DATASETS,
+        ),
+
+        # 3) create_roi_masks.smk -> make_roi_masks
+        #    ROI masks in data/{dataset}/roi_masks
+        expand(
+            rules.make_roi_masks.output.out_dir,
+            dataset=DATASETS,
+        ),
+
+        # 4) binarize_masks.smk -> replace_1_to_255
+        #    binarized masks in data/{dataset}/masks/binarized
+        expand(
+            rules.replace_1_to_255.output.out_dir,
+            dataset=DATASETS,
+        ),
+
+        # 5) downsample.smk -> downsample
+        #    downsampled predictions/masks for all kinds & widths
+        expand(
+            rules.downsample.output.out_dir,
+            dataset=DATASETS,
+            kind=KINDS,
+            width=WIDTHS,
+        ),
+
+        # 6) refinement.smk -> refinement
+        #    final refined predictions for all k/res for Fundus-AVSeg
         expand(
             rules.refinement.output.refined,
-            dataset=DATASETS,
+            dataset=["Fundus-AVSeg"],
             res=RESOLUTIONS,
             k=k,
-        ),
+        )
+
