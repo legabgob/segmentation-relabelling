@@ -1,24 +1,31 @@
 # rules/downsample.smk
+from snakemake.io import glob_wildcards
 
-# Set these to whatever makes sense in your project
+# We downsample:
+#  - converted segs  -> data/{dataset}/segs_converted/{sample}.png
+#  - ROI masks       -> data/{dataset}/roi_masks/{sample}.png
+
 KINDS = ["segs_converted", "roi_masks"]
-WIDTHS = [576, 1024]
+WIDTHS = ["576", "1024"]   # width wildcard is a string; we cast to int in params
+
+# Discover dataset/sample pairs from segs_converted; roi_masks should match the same names
+DATASETS, SAMPLES = glob_wildcards("data/{dataset}/segs_converted/{sample}.png")
 
 rule downsample:
     """
-    Downsample all images in a folder for a given dataset/kind/width.
+    Downsample one image for a given dataset/kind/width.
+    Input:
+        data/{dataset}/{kind}/{sample}.png
+    Output:
+        data/{dataset}/downsampled/{width}px/{kind}/{sample}.png
     """
     input:
-        # Directory containing the original images
-        in_dir = "data/{dataset}/{kind}/"
+        "data/{dataset}/{kind}/{sample}.png"
     output:
-        # Directory to store the downsampled images
-        out_dir = directory("data/{dataset}/downsampled/{width}px/{kind}/")
+        "data/{dataset}/downsampled/{width}px/{kind}/{sample}.png"
     params:
         kind = "{kind}",
-        # width is wildcard string; cast to int in the script
         width = lambda wc: int(wc.width),
-        ext = ".png",
     script:
         "scripts/downsample_smk.py"
 

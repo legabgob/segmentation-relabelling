@@ -5,16 +5,16 @@ from PIL import Image
 def downsample_one(src: Path, dst: Path, kind: str, target_w: int):
     im = Image.open(src)
 
-    if kind == "segs":
+    if kind == "segs_converted":
         # Keep as RGB discrete labels
         im = im.convert("RGB")
         resample = Image.NEAREST
-    elif kind == "masks":
+    elif kind == "roi_masks":
         # Keep as grayscale discrete labels
         im = im.convert("L")
         resample = Image.NEAREST
     else:
-        raise ValueError("--kind must be 'predictions' or 'masks'")
+        raise ValueError("--kind must be 'segs_converted' or 'roi_masks'")
 
     w, h = im.size
     # Preserve aspect ratio
@@ -27,28 +27,9 @@ def downsample_one(src: Path, dst: Path, kind: str, target_w: int):
 
 
 # -------- Snakemake entrypoint --------
-# Expect:
-#   input.in_dir   -> input directory
-#   output.out_dir -> output directory
-#   params.kind    -> "predictions" or "masks"
-#   params.width   -> target width (int)
-#   params.ext     -> extension (".png" by default)
-
-in_dir = Path(str(snakemake.input.in_dir))
-out_dir = Path(str(snakemake.output.out_dir))
+src = Path(str(snakemake.input[0]))
+dst = Path(str(snakemake.output[0]))
 kind = str(snakemake.params.kind)
 width = int(snakemake.params.width)
-ext = str(getattr(snakemake.params, "ext", ".png"))
 
-files = sorted(p for p in in_dir.glob(f"*{ext}") if p.is_file())
-
-if not files:
-    raise SystemExit(f"No {ext} files found in {in_dir}")
-
-print(f"Found {len(files)} file(s). Downsampling to width {width} as {kind}…")
-for i, src in enumerate(files, 1):
-    dst = out_dir / src.name
-    downsample_one(src, dst, kind, width)
-    if i % 50 == 0:
-        print(f"  {i} done…")
-print(f"Done. Wrote {len(files)} file(s) to {out_dir}")
+downsample_one(src, dst, kind, width)
