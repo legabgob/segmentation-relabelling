@@ -6,10 +6,10 @@ rule refinement:
           else "/SSD/home/gabriel/rrwnet/data/weights/rrwnet_RITE_refinement.pth"
           ),
       segmentations = lambda wildcards: (
-            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/segs/"
+            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/segs_converted/"
         ),
         masks = lambda wildcards: (
-            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/masks/"
+            f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/roi_masks/"
         ),
     output:
         refined = directory(
