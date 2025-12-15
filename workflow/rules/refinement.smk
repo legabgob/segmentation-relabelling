@@ -1,9 +1,9 @@
 rule refinement:
     input:
       weights = lambda wildcards: (
-          "/SSD/home/gabriel/rrwnet/data/weights/rrwnet_HRF_0.pth"
+          "data/weights/rrwnet_HRF_0.pth"
           if wildcards.res == "1024"
-          else "/SSD/home/gabriel/rrwnet/data/weights/rrwnet_RITE_refinement.pth"
+          else "data/weights/rrwnet_RITE_refinement.pth"
           ),
       segmentations = lambda wildcards: (
             f"data/{wildcards.dataset}/downsampled/{wildcards.res}px/segs_converted/"

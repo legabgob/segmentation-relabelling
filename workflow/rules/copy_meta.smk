@@ -1,32 +1,39 @@
 # rules/copy_meta.smk
 
 import os
+from glob import glob
 
 def find_meta_like_csv(wc):
     """
-    Look for meta-like CSV under ./{dataset}/**/seg_legacy/{meta,bounds}.csv
-    Works for:
-      - ./{dataset}/seg_legacy/meta.csv
-      - ./{dataset}/{other_dir}/seg_legacy/bounds.csv
+    Look for meta.csv or bounds.csv under:
+      ./{dataset}/seg_legacy/
+      ./{dataset}/*/seg_legacy/
     """
-    root = f"./{wc.dataset}"
-    for dirpath, dirnames, filenames in os.walk(root):
-        if os.path.basename(dirpath) == "seg_legacy":
-            for name in ("bounds.csv", "meta.csv"):
-                if name in filenames:
-                    return os.path.join(dirpath, name)
+    candidates = []
 
-    raise FileNotFoundError(
-        f"No meta.csv or bounds.csv under {root}/**/seg_legacy/"
-    )
+    # case 1: dataset/seg_legacy/
+    candidates += glob(f"./{wc.dataset}/seg_legacy/meta.csv")
+    candidates += glob(f"./{wc.dataset}/seg_legacy/bounds.csv")
+
+    # case 2: dataset/*/seg_legacy/
+    candidates += glob(f"./{wc.dataset}/*/seg_legacy/meta.csv")
+    candidates += glob(f"./{wc.dataset}/*/seg_legacy/bounds.csv")
+
+    if not candidates:
+        raise FileNotFoundError(
+            f"No meta.csv or bounds.csv found for dataset {wc.dataset}"
+        )
+
+    # deterministic choice
+    return sorted(candidates)[0]
+
 
 rule copy_meta_csv:
     input:
         src = find_meta_like_csv
     output:
         dst = "data/{dataset}/meta/meta.csv"
-    shell:
-        r"""
-        mkdir -p $(dirname {output.dst})
-        cp {input.src} {output.dst}
-        """
+    run:
+        os.makedirs(os.path.dirname(output.dst), exist_ok=True)
+        shell("cp {input.src} {output.dst}")
+

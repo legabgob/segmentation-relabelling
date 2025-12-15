@@ -1,31 +1,22 @@
 import os
+from snakemake.io import directory
 
-#def find_roi_csv(wc):
-#    """
-#    Automatically selects bounds.csv or meta.csv if present.
-#    Priority: bounds.csv > meta.csv
-#    """
-#    base = f"data/{wc.dataset}/meta"
-#    bounds = f"{base}/bounds.csv"
-#    meta   = f"{base}/meta.csv"
-#
-#    if os.path.exists(bounds):
-#        return bounds
-#    if os.path.exists(meta):
-#        return meta
-#
-#    raise FileNotFoundError(
-    #        f"No bounds.csv or meta.csv found in {base}/"
-    #    )
+def find_roi_csv(wc):
+    base = f"data/{wc.dataset}/meta"
+    bounds = f"{base}/bounds.csv"
+    meta   = f"{base}/meta.csv"
+
+    if os.path.exists(bounds):
+        return bounds
+    if os.path.exists(meta):
+        return meta
+
+    raise FileNotFoundError(f"No bounds.csv or meta.csv in {base}")
 
 
 rule make_roi_masks:
-    """
-    Generate ROI circular masks from either bounds.csv or meta.csv,
-    depending on which one exists.
-    """
     input:
-        csv = "data/{dataset}/meta/meta.csv"
+        csv = find_roi_csv,
     output:
         out_dir = directory("data/{dataset}/roi_masks")
     params:
