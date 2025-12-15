@@ -52,3 +52,10 @@ scripts/
   binarize_masks_smk.py
   compute_metrics_smk.py
 ```
+
+## Installation
+
+```text
+git lfs install 
+git clone git@github.com:legabgob/segmentation-relabelling.git
+```
