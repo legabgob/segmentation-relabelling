@@ -2,7 +2,10 @@
 legacy_root: "/HDD/data/relabelling-project"
 
 # Where your rrwnet get_predictions.py lives (external dependency)
-rrwnet_script: "/SSD/home/gabriel/rrwnet/clone/get_predictions.py"
+rrwnet:
+  # Path to RRWNet get_predictions.py on *your* machine
+  script: "/SSD/home/gabriel/rrwnet/clone/get_predictions.py"
+  python: "python3"
 
 # Weights shipped in this repo (relative paths)
 weights:
