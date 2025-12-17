@@ -1,18 +1,14 @@
-
+# workflow/rules/binarize_masks.smk
 from snakemake.io import directory
 
-# Optionally define datasets here or in your main Snakefile
-
-rule replace_1_to_255:
+rule binarize_roi_masks:
     """
-    Batch replace grayscale pixel value 1 -> 255 for all images in a directory.
+    Replace pixel value 1 -> 255 for ROI masks (directory batch).
     """
     input:
-        # Directory containing original grayscale images
-        in_dir = "data/{dataset}/masks/orig"
+        in_dir = "data/{dataset}/roi_masks"
     output:
-        # Directory to write modified images
-        out_dir = directory("data/{dataset}/masks/binarized")
+        out_dir = directory("data/{dataset}/roi_masks_binarized")
     params:
         ext = ".png"
     script:

@@ -1,10 +1,22 @@
-#DATASETS = ["FIVES", "Fundus-AVSeg", "leuven-haifa"]
-RESOLUTIONS = ["576", "1024"]
-k = range(3, 9)
+import re
+
 configfile: "workflow/config/config.yaml"
 
-# 1) Include all rule files (order here doesn't really matter,
-#    but we keep it in logical pipeline order for sanity)
+DATASETS = config["datasets"]
+REFINE_DATASETS = config.get("refine_datasets", DATASETS)
+
+RESOLUTIONS = ["576", "1024"]
+k = range(3, 9)
+
+# Prevent dataset wildcards from accidentally matching paths like "refined/Fundus-AVSeg/k3"
+# by constraining them to only configured dataset names.
+dataset_regex = "(" + "|".join(re.escape(d) for d in DATASETS) + ")"
+wildcard_constraints:
+    dataset = dataset_regex,
+    res = r"(576|1024)",
+    k = r"\d+",
+    kind = r"(segs_converted|roi_masks_binarized)"
+
 include: "./rules/vascxgray_to_rgb.smk"
 include: "./rules/copy_meta.smk"
 include: "./rules/create_roi_masks.smk"
@@ -14,20 +26,14 @@ include: "./rules/refinement.smk"
 
 rule all:
     input:
-        # copy meta.csv for all DATASETS
-        expand("data/{dataset}/meta/meta.csv", dataset=DATASETS_BASES),
-        # Final desired outputs: refinement for Fundus-AVSeg at all k, resolutions
+        # Ensure meta gets copied for all datasets
+        expand("data/{dataset}/meta/meta.csv", dataset=DATASETS),
+
+        # Final refinement outputs
         expand(
             rules.refinement.output.refined,
-            dataset=["Fundus-AVSeg", "FIVES", "leuven-haifa"],
+            dataset=REFINE_DATASETS,
             res=RESOLUTIONS,
             k=k,
-        ),
-    log:
-        err = "logs/all.err",
-        out = "logs/all.out"
-    
-    benchmark:
-        "benchmarks/all.txt"
-
+        )
 

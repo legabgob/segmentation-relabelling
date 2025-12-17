@@ -1,48 +1,39 @@
-# Automatically discover samples from input folder
+# workflow/rules/vascxgray_to_rgb.smk
+import os
 from pathlib import Path
+from snakemake.io import directory
 
-ROOT = Path("/HDD/data/relabelling-project")
+LEGACY_ROOT = Path(config["legacy_root"]).resolve()
 
-# Map (dataset, sample) -> full path to grayscale AV label
-input_map = {}
+def find_av_dir(wc):
+    """
+    Find a seg_legacy/av directory for this dataset, supporting:
+      A) legacy_root/dataset/seg_legacy/av/
+      B) legacy_root/dataset/*/seg_legacy/av/
+    Deterministic choice: prefer A, else first sorted match in B.
+    """
+    droot = LEGACY_ROOT / wc.dataset
 
-for p in ROOT.rglob("seg_legacy/av/*.png"):
-    # Expect something like:
-    # /HDD/.../relabelling-project/{dataset}/[optional other dirs]/seg_legacy/av/{sample}.png
-    parts = p.parts
-    try:
-        idx = parts.index("relabelling-project")
-    except ValueError:
-        continue  # shouldn't happen, but be safe
+    cand_a = droot / "seg_legacy" / "av"
+    if cand_a.is_dir():
+        return str(cand_a)
 
-    if idx + 2 >= len(parts):
-        continue
+    cands_b = sorted(droot.glob("*/seg_legacy/av"))
+    for c in cands_b:
+        if c.is_dir():
+            return str(c)
 
-    dataset = parts[idx + 1]          # e.g. "FIVES" or "Fundus-AVSeg"
-    sample = p.stem                   # filename without .png
-
-    # If the same (dataset, sample) appears in multiple subdirs, last one wins.
-    input_map[(dataset, sample)] = str(p)
-
-PAIRS = sorted(input_map.keys())
-DATASETS = sorted({d for d, _ in PAIRS})
-SAMPLES = sorted({s for _, s in PAIRS})
-
-
-def find_gray_av_input(wc):
-    key = (wc.dataset, wc.sample)
-    try:
-        return input_map[key]
-    except KeyError:
-        raise ValueError(
-            f"No grayscale AV input found for dataset={wc.dataset}, sample={wc.sample}. "
-            f"Known pairs: {len(input_map)}"
-        )
+    raise FileNotFoundError(f"No seg_legacy/av folder found under {droot}")
 
 rule gray_to_rgb:
+    """
+    Convert grayscale AV label images (0,1,2,3) to RGB A/V/BV mapping.
+    Runs in batch on a dataset directory.
+    """
     input:
-        gray = find_gray_av_input
+        av_dir = find_av_dir
     output:
-        rgb = "data/{dataset}/segs_converted/{sample}.png"
+        out_dir = directory("data/{dataset}/segs_converted")
     script:
-        "scripts/gray2rgb_smk.py"
+        "scripts/gray_to_rgb_dir_smk.py"
+

@@ -1,5 +1,23 @@
+# Root where all datasets live (each containing seg_legacy/)
 legacy_root: "/HDD/data/relabelling-project"
+
+# Where your rrwnet get_predictions.py lives (external dependency)
+rrwnet_script: "/SSD/home/gabriel/rrwnet/clone/get_predictions.py"
+
+# Weights shipped in this repo (relative paths)
+weights:
+  "1024": "data/weights/rrwnet_HRF_0.pth"
+  "576": "data/weights/rrwnet_RITE_refinement.pth"
+
+# Optional: only consider datasets whose top folder name is in this list
 datasets:
+  - "Fundus-AVSeg"
+  - "FIVES"
+  - "leuven-haifa"
+
+resolutions: ["576", "1024"]
+k_range: [3, 9]   # python-style: start inclusive, end exclusive
+refine_datasets:
   - "Fundus-AVSeg"
   - "FIVES"
   - "leuven-haifa"
