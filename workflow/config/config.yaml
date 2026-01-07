@@ -19,7 +19,7 @@ datasets:
   - "leuven-haifa"
 
 resolutions: ["576", "1024"]
-k_range: [3, 9]   # python-style: start inclusive, end exclusive
+k_range: [3, 9] 
 refine_datasets:
   - "Fundus-AVSeg"
   - "FIVES"
@@ -34,7 +34,7 @@ metrics:
     - "leuven-haifa"
 
 ground_truth:
-  enabled: false
+  enabled: true
   # Set enabled: true once you have configured the patterns below.
   # root: "/path/to/where/GTs/live"   # defaults to legacy_root if omitted
 
@@ -42,7 +42,7 @@ ground_truth:
     datasets:
       Fundus-AVSeg:
         # Example: GTs stored in a single folder
-        pattern: "Fundus-AVSeg/GTs/{sample}.png"
+        pattern: "Fundus-AVSeg/annotation/{sample}.png"
         mapping:
           - [[255, 0, 0], [255, 0, 255]]
           - [[0, 0, 255], [0, 255, 255]]
@@ -55,7 +55,7 @@ ground_truth:
         mapping:
           - [[255, 0, 0], [255, 0, 255]]
           - [[0, 0, 255], [0, 255, 255]]
-          - [[0, 255, 0], [255, 255, 255]]
+          - [[255, 0, 255], [255, 255, 255]]
           - [[255, 255, 255], [0, 0, 255]]
 
   vessel_gray:
