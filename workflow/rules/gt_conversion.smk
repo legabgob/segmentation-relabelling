@@ -157,3 +157,30 @@ rule downsample_gt_vessel:
     script:
         "scripts/downsample_dir_smk.py"
 
+def vessel_src_dir_other(wc):
+    pat = VES_CFG[wc.dataset]["pattern"]
+    return _pattern_dir(pat, dataset=wc.dataset, other_dir=wc.other_dir)
+
+rule copy_gt_vessel_otherdir:
+    input:
+        src_dir = vessel_src_dir_other
+    output:
+        out_dir = directory("data/{dataset}/{other_dir}/gt_vessel/raw")
+    shell:
+        r"""
+        mkdir -p {output.out_dir}
+        cp -f {input.src_dir}/*.png {output.out_dir}/
+        """
+
+rule downsample_gt_vessel_otherdir:
+    input:
+        in_dir = "data/{dataset}/{other_dir}/gt_vessel/raw"
+    output:
+        out_dir = directory("data/{dataset}/{other_dir}/downsampled/{res}px/GTs_vessel")
+    params:
+        kind = "gt_vessel",
+        width = lambda wc: int(wc.res),
+        ext = ".png"
+    script:
+        "scripts/downsample_dir_smk.py"
+

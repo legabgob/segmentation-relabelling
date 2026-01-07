@@ -55,6 +55,26 @@ GT_AV_OTHERDIR_TARGETS = [
     for res in RESOLUTIONS
 ]
 
+# Split vessel-only datasets into those with and without {other_dir}
+VES_GT_WITH_OTHERDIR = [
+    d for d in VESSEL_GT_DATASETS if "{other_dir}" in str(VES_CFG[d].get("pattern", ""))
+]
+VES_GT_SIMPLE = [d for d in VESSEL_GT_DATASETS if d not in VES_GT_WITH_OTHERDIR]
+
+# Discover vessel other_dir values
+VES_OTHERDIRS = {}
+for d in VES_GT_WITH_OTHERDIR:
+    abs_pat = str(GT_ROOT / VES_CFG[d]["pattern"])
+    ods, _samples = glob_wildcards(abs_pat)
+    VES_OTHERDIRS[d] = sorted(set(ods))
+
+VES_GT_OTHERDIR_TARGETS = [
+    f"data/{d}/{od}/downsampled/{res}px/GTs_vessel"
+    for d in VES_GT_WITH_OTHERDIR
+    for od in VES_OTHERDIRS.get(d, [])
+    for res in RESOLUTIONS
+]
+
 # Prevent dataset wildcards from accidentally matching paths like "refined/Fundus-AVSeg/k3"
 # by constraining them to only configured dataset names.
 dataset_regex = "(" + "|".join(re.escape(d) for d in DATASETS) + ")"
@@ -94,7 +114,10 @@ rule all:
         # A/V GT datasets with other_dir (targets built explicitly)
         GT_AV_OTHERDIR_TARGETS,
         # Vessel-only GT datasets (grayscale)
-        expand("data/{dataset}/downsampled/{res}px/GTs_vessel", dataset=VESSEL_GT_DATASETS, res=RESOLUTIONS),
+        # Vessel-only GT datasets without other_dir
+        expand("data/{dataset}/downsampled/{res}px/GTs_vessel", dataset=VES_GT_SIMPLE, res=RESOLUTIONS),
+        # Vessel-only GT datasets with other_dir
+        VES_GT_OTHERDIR_TARGETS,
 
 
         # Metrics CSVs (optional; controlled by config['metrics'])

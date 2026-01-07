@@ -61,4 +61,4 @@ ground_truth:
   vessel_gray:
     datasets:
       FIVES:
-        pattern: "FIVES/train/GTs/{sample}.png"
+        pattern: "FIVES/{other_dir}/ground_truth/{sample}.png"
