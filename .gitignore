@@ -225,3 +225,4 @@ data/*
 .snakemake/metadata/
 .snakemake/scripts/
 
+results/*
