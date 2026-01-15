@@ -147,3 +147,7 @@ rule all:
             res=RESOLUTIONS,
             k=k,
         ),
+
+    log:
+        errors="logs/all.err",
+        output="logs/all.log"
