@@ -88,6 +88,27 @@ VES_GT_OTHERDIR_TARGETS = [
     for res in RESOLUTIONS
 ]
 
+VASCX_REFINED = bool(config.get("vascx", {}).get("refined_features_enabled", True))
+
+if VASCX_REFINED:
+    # Simple datasets
+    VASCX_REFINED_TARGETS = expand(
+        rules.vascx_features_refined_simple.output.features,
+        dataset=SIMPLE_DATASETS,
+        k=K_VALUES,
+        res=RESOLUTIONS,
+    )
+
+    # Otherdir datasets
+    VASCX_REFINED_TARGETS += [
+        f"{config.get('vascx', {}).get('features_refined_out', 'results/vascx_features_refined')}/{d}/{od}/k{k}/downsampled/{res}px/vascx_features.tsv"
+        for d in OTHERDIR_DATASETS
+        for od in OTHERDIRS.get(d, [])
+        for k in K_VALUES
+        for res in RESOLUTIONS
+    ]
+else:
+    VASCX_REFINED_TARGETS = []
 
 
 # Prevent dataset wildcards from accidentally matching paths like "refined/Fundus-AVSeg/k3"
@@ -100,7 +121,7 @@ wildcard_constraints:
     k = r"\d+",
     kind = r"(segs_converted|roi_masks_binarized)"
 
-
+# Rules to include
 include: "./rules/vascxgray_to_rgb.smk"
 include: "./rules/copy_meta.smk"
 include: "./rules/create_roi_masks.smk"
@@ -110,6 +131,8 @@ include: "./rules/refinement.smk"
 include: "./rules/dice.smk"
 include: "./rules/gt_conversion.smk"
 include: "./rules/refined_rgb_to_labels.smk"
+include: "./rules/vascx_dataset_from_refined.smk"
+include: "./rules/vascx_features_from_refined.smk"
 
 rule all:
     input:
@@ -147,6 +170,8 @@ rule all:
             res=RESOLUTIONS,
             k=k,
         ),
+
+        VASCX_REFINED_TARGETS,
 
     log:
         errors="logs/all.err",

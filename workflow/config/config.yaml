@@ -71,3 +71,11 @@ refined_to_labels:
   th: 200
   delta: 15
   tie_vote: 1
+
+vascx:
+  refined_features_enabled: true
+  dataset_view_root: "results/vascx_datasets"
+  features_refined_out: "results/vascx_features_refined"
+  n_jobs: 64
+  feature_set: "bergmann"
+  av_subfolder: "av"
