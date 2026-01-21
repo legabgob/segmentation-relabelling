@@ -55,7 +55,7 @@ K_VALUES = list(range(int(k_start), int(k_end)))
 
 GT_CFG = config.get("ground_truth", {}) if isinstance(config, dict) else {}
 GT_ENABLED = bool(GT_CFG.get("enabled", False))
-GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
+#GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
 
 AV_CFG = ((GT_CFG.get("av_rgb", {}) or {}).get("datasets", {}) or {}) if GT_ENABLED else {}
 
@@ -82,6 +82,7 @@ for d in METRICS_AV_OTHERDIR:
         raise ValueError(
             f"metrics: dataset '{d}' requires ground_truth.av_rgb.datasets.{d}.pattern with '{{other_dir}}'"
         )
+    GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
     abs_pat = str(GT_ROOT / pat)
     other_dirs, _samples = glob_wildcards(abs_pat)  # expects (other_dir, sample)
     METRICS_AV_OTHERDIR_VALUES[d] = sorted(set(other_dirs))

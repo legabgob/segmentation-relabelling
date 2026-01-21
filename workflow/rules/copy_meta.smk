@@ -2,14 +2,13 @@
 import os
 from pathlib import Path
 
-LEGACY_ROOT = Path(config["legacy_root"]).resolve()
-
 def find_meta_like_csv(wc):
     """
     Find bounds.csv (preferred) or meta.csv under:
       A) legacy_root/dataset/seg_legacy/
       B) legacy_root/dataset/*/seg_legacy/
     """
+    LEGACY_ROOT = Path(config["legacy_root"]).resolve()
     droot = LEGACY_ROOT / wc.dataset
 
     # Prefer A

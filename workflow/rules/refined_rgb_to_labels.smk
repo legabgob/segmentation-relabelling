@@ -17,7 +17,7 @@ rule refined_rgb_to_labels:
     Batch converts a whole refined directory for each (dataset,k,res).
     """
     input:
-        in_dir = directory("results/refined/{dataset}/k{k}/downsampled/{res}px")
+        in_dir = "results/refined/{dataset}/k{k}/downsampled/{res}px"
     output:
         out_dir = directory(f"{LABELS_OUT_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px")
     params:

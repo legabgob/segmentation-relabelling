@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from snakemake.io import directory
 
-LEGACY_ROOT = Path(config["legacy_root"]).resolve()
 
 def find_av_dir(wc):
     """
@@ -12,6 +11,7 @@ def find_av_dir(wc):
       B) legacy_root/dataset/*/seg_legacy/av/
     Deterministic choice: prefer A, else first sorted match in B.
     """
+    LEGACY_ROOT = Path(config["legacy_root"]).resolve()
     droot = LEGACY_ROOT / wc.dataset
 
     cand_a = droot / "seg_legacy" / "av"

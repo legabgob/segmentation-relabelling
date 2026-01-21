@@ -27,7 +27,7 @@ import glob
 
 GT_CFG = config.get("ground_truth", {})
 # Default GT root = legacy_root unless overridden
-GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
+#GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
 
 AV_CFG  = (GT_CFG.get("av_rgb", {}) or {}).get("datasets", {}) or {}
 VES_CFG = (GT_CFG.get("vessel_gray", {}) or {}).get("datasets", {}) or {}
@@ -57,6 +57,7 @@ def _pattern_dir(pattern: str, **fmt) -> str:
     # Fill pattern enough to compute directory; sample placeholder replaced.
     fmt2 = dict(fmt)
     fmt2["sample"] = "__SAMPLE__"
+    GT_ROOT = Path(GT_CFG.get("root", config.get("legacy_root", "."))).resolve()
     p = (GT_ROOT / pattern.format(**fmt2)).parent
     return str(p)
 
