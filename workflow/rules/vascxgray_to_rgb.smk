@@ -35,5 +35,5 @@ rule gray_to_rgb:
     output:
         out_dir = directory("data/{dataset}/segs_converted")
     script:
-        "scripts/gray_to_rgb_dir_smk.py"
+        "../scripts/gray_to_rgb_dir_smk.py"
 

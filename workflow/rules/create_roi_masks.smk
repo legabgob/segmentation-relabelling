@@ -11,5 +11,5 @@ rule make_roi_masks:
         img_ext = ".png",
         skip_if_flag_false = True,
     script:
-        "scripts/roi_from_csv_smk.py"
+        "../scripts/roi_from_csv_smk.py"
 
