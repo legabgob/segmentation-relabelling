@@ -18,7 +18,7 @@ rule refinement:
             --weights {input.weights} \
             --images-path {input.segmentations} \
             --masks-path {input.masks} \
-            --output-path {output.refined} \
+            --save-path {output.refined} \
             --num-iterations {wildcards.k} \
             --refine
         """
