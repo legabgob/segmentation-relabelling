@@ -17,5 +17,5 @@ rule downsample:
         width = lambda wc: int(wc.width),
         ext = ".png",
     script:
-        "scripts/downsample_dir_smk.py"
+        "../scripts/downsample_dir_smk.py"
 

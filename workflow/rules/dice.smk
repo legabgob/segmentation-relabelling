@@ -182,7 +182,7 @@ rule compute_metrics_av_simple:
         gt_native_dir  = "",
         seg_native_dir = "",
     script:
-        "scripts/compute_metrics_smk.py"
+        "../scripts/compute_metrics_smk.py"
 
 rule compute_metrics_av_otherdir:
     """Compute metrics for A/V datasets with multiple GT subfolders ({other_dir})."""
@@ -205,7 +205,7 @@ rule compute_metrics_av_otherdir:
         gt_native_dir  = "",
         seg_native_dir = "",
     script:
-        "scripts/compute_metrics_smk.py"
+        "../scripts/compute_metrics_smk.py"
 
 rule compute_metrics_vessel_only:
     """Optional: compute metrics for vessel-only datasets (must be configured in metrics.vessel_gt_dirs)."""
@@ -228,5 +228,5 @@ rule compute_metrics_vessel_only:
         gt_native_dir  = lambda wc: _vessel_native_dirs(wc.dataset)[0],
         seg_native_dir = lambda wc: _vessel_native_dirs(wc.dataset)[1],
     script:
-        "scripts/compute_metrics_smk.py"
+        "../scripts/compute_metrics_smk.py"
 

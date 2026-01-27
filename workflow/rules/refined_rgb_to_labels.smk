@@ -27,5 +27,5 @@ rule refined_rgb_to_labels:
         delta = int(LBL_CFG.get("delta", 15)),
         tie_vote = int(LBL_CFG.get("tie_vote", 1)),  # 1=True, 0=False
     script:
-        "scripts/refined_rgb_to_labels_dir_smk.py"
+        "../scripts/refined_rgb_to_labels_dir_smk.py"
 

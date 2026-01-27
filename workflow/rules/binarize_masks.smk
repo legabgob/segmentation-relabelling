@@ -12,5 +12,5 @@ rule binarize_roi_masks:
     params:
         ext = ".png"
     script:
-        "scripts/binarize_masks_smk.py"
+        "../scripts/binarize_masks_smk.py"
 

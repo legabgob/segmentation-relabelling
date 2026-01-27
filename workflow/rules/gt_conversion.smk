@@ -97,7 +97,7 @@ rule recolor_gt_av_simple:
         mapping = lambda wc: _mapping(wc.dataset),
         ext = ".png"
     script:
-        "scripts/recolor_rgb_dir_smk.py"
+        "../scripts/recolor_rgb_dir_smk.py"
 
 rule downsample_gt_av_simple:
     wildcard_constraints:
@@ -111,7 +111,7 @@ rule downsample_gt_av_simple:
         width = lambda wc: int(wc.res),
         ext = ".png"
     script:
-        "scripts/downsample_dir_smk.py"
+        "../scripts/downsample_dir_smk.py"
 
 # -------------------------
 # A/V RGB GT (with other_dir)
@@ -145,7 +145,7 @@ rule recolor_gt_av_otherdir:
         mapping = lambda wc: _mapping(wc.dataset),
         ext = ".png"
     script:
-        "scripts/recolor_rgb_dir_smk.py"
+        "../scripts/recolor_rgb_dir_smk.py"
 
 rule downsample_gt_av_otherdir:
     wildcard_constraints:
@@ -159,7 +159,7 @@ rule downsample_gt_av_otherdir:
         width = lambda wc: int(wc.res),
         ext = ".png"
     script:
-        "scripts/downsample_dir_smk.py"
+        "../scripts/downsample_dir_smk.py"
 
 # -------------------------
 # Vessel-only grayscale GT
@@ -190,7 +190,7 @@ rule downsample_gt_vessel:
         width = lambda wc: int(wc.res),
         ext = ".png"
     script:
-        "scripts/downsample_dir_smk.py"
+        "../scripts/downsample_dir_smk.py"
 
 def vessel_src_dir_other(wc):
     pat = VES_CFG[wc.dataset]["pattern"]
@@ -217,5 +217,5 @@ rule downsample_gt_vessel_otherdir:
         width = lambda wc: int(wc.res),
         ext = ".png"
     script:
-        "scripts/downsample_dir_smk.py"
+        "../scripts/downsample_dir_smk.py"
 

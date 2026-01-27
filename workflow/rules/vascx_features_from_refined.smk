@@ -27,7 +27,7 @@ rule vascx_features_refined_simple:
         sep = "\t",
         na_rep = "NaN",
     script:
-        "scripts/vascx_feature_extract_smk.py"
+        "../scripts/vascx_feature_extract_smk.py"
 
 
 rule vascx_features_refined_otherdir:
@@ -44,5 +44,5 @@ rule vascx_features_refined_otherdir:
         sep = "\t",
         na_rep = "NaN",
     script:
-        "scripts/vascx_feature_extract_smk.py"
+        "../scripts/vascx_feature_extract_smk.py"
 
