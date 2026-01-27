@@ -51,6 +51,7 @@ rule make_vascx_view_simple:
         original = original_dir_simple,
         # directory() is outputs-only; keep as plain path string for input
         av = f"{REF_LABEL_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px",
+        meta = "data/datasets/{dataset}/meta/meta_filtered.csv",
     output:
         view = directory(f"{VASCX_VIEW_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px"),
     run:
@@ -59,13 +60,15 @@ rule make_vascx_view_simple:
 
         orig_link = view / "original"
         av_link = view / "av"
+        meta_link = view / "meta.csv"
 
-        for link in (orig_link, av_link):
+        for link in (orig_link, av_link, meta_link):
             if link.exists() or link.is_symlink():
                 link.unlink()
 
         os.symlink(os.path.abspath(input.original), orig_link)
         os.symlink(os.path.abspath(input.av), av_link)
+        os.symlink(os.path.abspath(input.meta), meta_link)
 
 
 rule make_vascx_view_otherdir:
@@ -74,6 +77,7 @@ rule make_vascx_view_otherdir:
     input:
         original = original_dir_other,
         av = f"{REF_LABEL_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px",
+        meta = "data/datasets/{dataset}/meta/meta_filtered.csv",
     output:
         view = directory(f"{VASCX_VIEW_ROOT}" + "/{dataset}/{other_dir}/k{k}/downsampled/{res}px"),
     run:
@@ -82,11 +86,13 @@ rule make_vascx_view_otherdir:
 
         orig_link = view / "original"
         av_link = view / "av"
+        meta_link = view / "meta.csv"
 
-        for link in (orig_link, av_link):
+        for link in (orig_link, av_link, meta_link):
             if link.exists() or link.is_symlink():
                 link.unlink()
 
         os.symlink(os.path.abspath(input.original), orig_link)
         os.symlink(os.path.abspath(input.av), av_link)
+        os.symlink(os.path.abspath(input.meta), meta_link)
 
