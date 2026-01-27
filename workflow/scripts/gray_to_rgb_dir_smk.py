@@ -66,7 +66,7 @@ def iter_inputs(in_dir: Path, ext: str, recursive: bool):
 
 # ---------------- Snakemake entrypoint ----------------
 
-in_dir = Path(str(snakemake.input.in_dir))
+in_dir = Path(str(snakemake.input.av_dir))
 out_dir = Path(str(snakemake.output.out_dir))
 
 ext = str(getattr(snakemake.params, "ext", ".png"))

@@ -25,7 +25,7 @@ def parse_row(row, header):
     H = int(float(row[idx["h"]]))
     W = int(float(row[idx["w"]]))
     cy = float(row[idx["cy"]])
-    cx = float(row[idx["cx"]]))
+    cx = float(row[idx["cx"]])
     R = float(row[idx["radius"]])
     return name, success, H, W, cx, cy, R
 
