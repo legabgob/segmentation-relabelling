@@ -47,100 +47,86 @@ def original_dir_other(wc):
 
 rule make_vascx_view_simple:
     wildcard_constraints:
-        dataset="|".join(map(re.escape, SIMPLE_DATASETS)) if SIMPLE_DATASETS else "NO_MATCH"
+        dataset="[^/]+",  # No slashes allowed
     input:
+        # All required folders from seg_legacy
         original = original_dir_simple,
-        # directory() is outputs-only; keep as plain path string for input
-        av = f"{REF_LABEL_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px",
+        av = "results/refined_labels/{dataset}/k{k}/downsampled/{res}px",
         meta = "data/{dataset}/meta/meta_filtered.csv",
+        # Additional folders that VascX expects
+        ce = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, "seg_legacy", "ce"),
+        rgb = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, "seg_legacy", "rgb"),
+        discs = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, "seg_legacy", "discs"),
+        fovea = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, "seg_legacy", "fovea.csv"),
     output:
         view = directory(f"{VASCX_VIEW_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px"),
     run:
         view = Path(output.view)
         view.mkdir(parents=True, exist_ok=True)
+
+        # Create symlinks for all required components
+        links = {
+            "original": input.original,
+            "av": input.av,
+            "meta.csv": input.meta,
+            "ce": input.ce,
+            "rgb": input.rgb,
+            "discs": input.discs,
+            "fovea.csv": input.fovea,
+        }
         
-        # Copy files 
-        original_src = Path(input.original)
-        av_src = Path(input.av)
-        meta_src = Path(input.meta)
-
-        original_dst = view / "original"
-        av_dst = view / "av"
-
-        if original_dst.exists():
-            shutil.rmtree(original_dst)
+        for link_name, target in links.items():
+            link_path = view / link_name
+            
+            # Remove existing link/file if present
+            if link_path.exists() or link_path.is_symlink():
+                link_path.unlink()
+            
+            # Create symlink with absolute path
+            os.symlink(os.path.abspath(target), link_path)
         
-        if av_dst.exists():
-            shutil.rmtree(av_dst)
-
-        shutil.copytree(original_src, original_dst)
-        shutil.copytree(av_src, av_dst)
-
-        shutil.copy2(meta_src, view / "meta.csv")
-
-        print(f"[make_vascx_view_simple] Copied {len(list(original_dst.glob('*.png')))} original files.")
-        print(f"[make_vascx_view_simple] Copied {len(list(av_dst.glob('*.png')))} av files.")
-        print(f"[make_vascx_view_simple] Copied meta file.")
-                
-
-
-
-    #orig_link = view / "original"
-    #   av_link = view / "av"
-    #   meta_link = view / "meta.csv"
-    #
-    #   for link in (orig_link, av_link, meta_link):
-    #            if link.exists() or link.is_symlink():
-    #           link.unlink()
-    #
-    #   os.symlink(os.path.abspath(input.original), orig_link)
-    #   os.symlink(os.path.abspath(input.av), av_link)
-  #   os.symlink(os.path.abspath(input.meta), meta_link)
+        print(f"[make_vascx_view_simple] Created symlinks for {len(links)} components")
 
 
 rule make_vascx_view_otherdir:
     wildcard_constraints:
-        dataset="|".join(map(re.escape, OTHERDIR_DATASETS)) if OTHERDIR_DATASETS else "NO_MATCH"
+        dataset="[^/]+",
+        other_dir="[^/]+",
     input:
+        # All required folders from seg_legacy
         original = original_dir_other,
-        av = f"{REF_LABEL_ROOT}" + "/{dataset}/k{k}/downsampled/{res}px",
+        av = "results/refined_labels/{dataset}/k{k}/downsampled/{res}px",
         meta = "data/{dataset}/meta/meta_filtered.csv",
+        # Additional folders that VascX expects
+        ce = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, wc.other_dir, "seg_legacy", "ce"),
+        rgb = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, wc.other_dir, "seg_legacy", "rgb"),
+        discs = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, wc.other_dir, "seg_legacy", "discs"),
+        fovea = lambda wc: os.path.join(LEGACY_ROOT, wc.dataset, wc.other_dir, "seg_legacy", "fovea.csv"),
     output:
         view = directory(f"{VASCX_VIEW_ROOT}" + "/{dataset}/{other_dir}/k{k}/downsampled/{res}px"),
     run:
         view = Path(output.view)
         view.mkdir(parents=True, exist_ok=True)
-      
-        original_src = Path(input.original)
-        av_src = Path(input.av)
-        meta_src = Path(input.meta)
 
-        original_dst = view / "original"
-        av_dst = view / "av"
-
-        if original_dst.exists():
-            shutil.rmtree(original_dst)
-        if av_dst.exists():
-            shutil.rmtree(av_dst)
-
-        shutil.copytree(original_src, original_dst)
-        shutil.copytree(av_src, av_dst)
-
-        shutil.copy2(meta_src, view / "meta.csv")
-
-        print(f"[make_vascx_view_otherdir] Copied {len(list(original_dst.glob('*.png')))} original files.")
-        print(f"[make_vascx_view_otherdir] Copied {len(list(av_dst.glob('*.png')))} av files.")
-        print(f"[make_vascx_view_otherdir] Copied meta file.")
-
-
-
+        # Create symlinks for all required components
+        links = {
+            "original": input.original,
+            "av": input.av,
+            "meta.csv": input.meta,
+            "ce": input.ce,
+            "rgb": input.rgb,
+            "discs": input.discs,
+            "fovea.csv": input.fovea,
+        }
         
-
-    #for link in (orig_link, av_link, meta_link):
-    #       if link.exists() or link.is_symlink():
-    #           link.unlink()
-    #
-    #   os.symlink(os.path.abspath(input.original), orig_link)
-    #   os.symlink(os.path.abspath(input.av), av_link)
-    #   os.symlink(os.path.abspath(input.meta), meta_link)
-
+        for link_name, target in links.items():
+            link_path = view / link_name
+            
+            # Remove existing link/file if present
+            if link_path.exists() or link_path.is_symlink():
+                link_path.unlink()
+            
+            # Create symlink with absolute path
+            os.symlink(os.path.abspath(target), link_path)
+        
+        print(f"[make_vascx_view_otherdir] Created symlinks for {len(links)} components")
