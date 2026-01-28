@@ -57,40 +57,32 @@ rule make_vascx_view_simple:
     run:
         view = Path(output.view)
         view.mkdir(parents=True, exist_ok=True)
-
-        # Create subdirs
-        original_dst = view / "original"
-        av_dst = view / "av"
-        meta_dst = view / "meta.csv"
-        original_dst.mkdir(parents=True, exist_ok=True)
-        av_dst.mkdir(parents=True, exist_ok=True)
-
-        # Hardlink files 
+        
+        # Copy files 
         original_src = Path(input.original)
         av_src = Path(input.av)
         meta_src = Path(input.meta)
 
-        # Hardlink original files
-        for src_file in original_src.glob("*.png"):
-            dst_file = original_dst / src_file.name
-            if dst_file.exists():
-                dst_file.unlink()
-            os.link(src_file, dst_file)
-  
-        # Hardlink av files
-        for src_file in av_src.glob("*.png"):
-            dst_file = av_dst / src_file.name
-            if dst_file.exists():
-                dst_file.unlink()
-            os.link(src_file, dst_file)
-        # Hardlink meta files
-        if meta_dst.exists():
-            meta_dst.unlink()
-        os.link(meta_src, meta_dst)
+        original_dst = view / "original"
+        av_dst = view / "av"
 
-        print(f"[make_vascx_view_simple] Hardlinked {len(list(original_dst.glob('*.png')))} original files.")
-        print(f"[make_vascx_view_simple] Hardlinked {len(list(av_dst.glob('*.png')))} av files.")
-        print(f"[make_vascx_view_simple] Hardlinked meta file.")
+        if original_dst.exists():
+            shutil.rmtree(original_dst)
+        
+        if av_dst.exists():
+            shutil.rmtree(av_dst)
+
+        shutil.copytree(original_src, original_dst)
+        shutil.copytree(av_src, av_dst)
+
+        shutil.copy2(meta_src, view / "meta.csv")
+
+        print(f"[make_vascx_view_simple] Copied {len(list(original_dst.glob('*.png')))} original files.")
+        print(f"[make_vascx_view_simple] Copied {len(list(av_dst.glob('*.png')))} av files.")
+        print(f"[make_vascx_view_simple] Copied meta file.")
+                
+
+
 
     #orig_link = view / "original"
     #   av_link = view / "av"
@@ -117,41 +109,28 @@ rule make_vascx_view_otherdir:
     run:
         view = Path(output.view)
         view.mkdir(parents=True, exist_ok=True)
-
-        original_dst = view / "original"
-        av_dst = view / "av"
-        meta_dst = view / "meta.csv"
-
-        original_dst.mkdir(parents=True, exist_ok=True)
-        av_dst.mkdir(parents=True, exist_ok=True)
-
-        # Hardlink files 
+      
         original_src = Path(input.original)
         av_src = Path(input.av)
         meta_src = Path(input.meta)
 
-        # Hardlink original files
-        for src_file in original_src.glob("*.png"):
-            dst_file = original_dst / src_file.name
-            if dst_file.exists():
-                dst_file.unlink()
-            os.link(src_file, dst_file)
+        original_dst = view / "original"
+        av_dst = view / "av"
 
-        # Hardlink av files
-        for src_file in av_src.glob("*.png"):
-            dst_file = av_dst / src_file.name
-            if dst_file.exists():
-                dst_file.unlink()
-            os.link(src_file, dst_file)
+        if original_dst.exists():
+            shutil.rmtree(original_dst)
+        if av_dst.exists():
+            shutil.rmtree(av_dst)
 
-        # Hardlink meta files
-        if meta_dst.exists():
-            meta_dst.unlink()
-        os.link(meta_src, meta_dst)
+        shutil.copytree(original_src, original_dst)
+        shutil.copytree(av_src, av_dst)
 
-        print(f"[make_vascx_view_otherdir] Hardlinked {len(list(original_dst.glob('*.png')))} original files.")
-        print(f"[make_vascx_view_otherdir] Hardlinked {len(list(av_dst.glob('*.png')))} av files.")
-        print(f"[make_vascx_view_otherdir] Hardlinked meta file.")
+        shutil.copy2(meta_src, view / "meta.csv")
+
+        print(f"[make_vascx_view_otherdir] Copied {len(list(original_dst.glob('*.png')))} original files.")
+        print(f"[make_vascx_view_otherdir] Copied {len(list(av_dst.glob('*.png')))} av files.")
+        print(f"[make_vascx_view_otherdir] Copied meta file.")
+
 
 
         
