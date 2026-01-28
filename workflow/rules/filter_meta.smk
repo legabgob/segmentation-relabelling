@@ -18,3 +18,15 @@ rule filter_meta_by_segs:
         ext = ".png",
     script:
         "../scripts/filter_meta_by_segs_smk.py"
+
+
+rule filter_nonsquare_images:
+    input:
+        meta = "data/{dataset}/meta/meta_filtered.csv",
+        images_dir = "data/{dataset}/segs_converted"
+    output:
+        meta = "data/{dataset}/meta/meta_filtered_square.csv"
+    log:
+        "logs/filter_nonsquare/{dataset}.log"
+    script:
+        "../scripts/filter_nonsquare_images_smk.py"
