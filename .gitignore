@@ -228,3 +228,5 @@ data/*
 results/*
 
 debug/
+
+nohup.out

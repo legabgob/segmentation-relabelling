@@ -12,6 +12,8 @@ rule refinement:
         masks = "data/{dataset}/downsampled/{res}px/roi_masks_binarized",
     output:
         refined = directory("results/refined/{dataset}/k{k}/downsampled/{res}px")
+    resources:
+        gpu_jobs=1
     shell:
         r"""
         {config[rrwnet][python]} {config[rrwnet][script]} \
